@@ -76,13 +76,49 @@ async function handleSignIn() {
 }
 
 // ---- Guest Sign In ----
-async function handleGuestSignIn() {
+function handleGuestSignIn() {
+    // Guest goes straight to main page — no Firebase auth needed
+    showPage('irrigation-page');
+}
+
+// ---- Google Sign In / Sign Up ----
+async function handleGoogleSignIn() {
+    const btn = document.getElementById('google-signin-btn') || document.getElementById('google-signup-btn');
+    if (btn) { btn.textContent = 'Connecting to Google…'; btn.disabled = true; }
+
     try {
-        if (!auth) { showPage('irrigation-page'); return; }
-        await auth.signInAnonymously();
+        if (!auth) throw { code: 'auth/not-configured' };
+
+        // 1. Create Google provider and trigger popup
+        const provider = new firebase.auth.GoogleAuthProvider();
+        provider.addScope('email');
+        provider.addScope('profile');
+
+        const result = await auth.signInWithPopup(provider);
+        const user   = result.user;
+
+        // 2. Save/update user data in Firestore (non-blocking)
+        if (db) {
+            db.collection('users').doc(user.uid).set({
+                uid:       user.uid,
+                name:      user.displayName || '',
+                email:     user.email,
+                provider:  'google',
+                lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true }).catch(() => {});
+        }
+
+        // 3. ✅ Navigate to main page
         showPage('irrigation-page');
+
     } catch (err) {
-        alert('Guest sign-in failed: ' + err.message);
+        if (err.code === 'auth/popup-closed-by-user') return; // user closed popup — do nothing
+        alert('Google sign-in failed: ' + friendlyError(err.code));
+    } finally {
+        if (btn) {
+            btn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5" /> Sign in with Google';
+            btn.disabled = false;
+        }
     }
 }
 
@@ -139,14 +175,19 @@ async function handleSignUp() {
 // ---- Human-readable Firebase error messages ----
 function friendlyError(code) {
     const messages = {
-        'auth/not-configured':     'Firebase is not set up yet. Add your config to index.html.',
-        'auth/user-not-found':       'No account found with this email.',
-        'auth/wrong-password':       'Incorrect password. Please try again.',
-        'auth/email-already-in-use': 'This email is already registered. Please sign in.',
-        'auth/weak-password':        'Password must be at least 6 characters.',
-        'auth/invalid-email':        'Please enter a valid email address.',
-        'auth/too-many-requests':    'Too many failed attempts. Please try again later.',
-        'auth/network-request-failed': 'Network error. Check your connection.',
+        'auth/not-configured':             'Firebase is not set up yet. Add your config to index.html.',
+        'auth/user-not-found':             'No account found with this email.',
+        'auth/wrong-password':             'Incorrect password. Please try again.',
+        'auth/invalid-credential':         'Incorrect email or password. Please try again.',
+        'auth/invalid-email':              'Please enter a valid email address.',
+        'auth/email-already-in-use':       'This email is already registered. Please sign in.',
+        'auth/weak-password':              'Password must be at least 6 characters.',
+        'auth/too-many-requests':          'Too many failed attempts. Please try again later.',
+        'auth/network-request-failed':     'Network error. Check your connection.',
+        'auth/admin-restricted-operation': 'This operation is not enabled. Please sign in with email.',
+        'auth/popup-blocked':              'Popup was blocked by your browser. Please allow popups for this site.',
+        'auth/cancelled-popup-request':    'Sign-in cancelled.',
+        'auth/unauthorized-domain':        'This domain is not authorised. Add it in Firebase Console → Authentication → Settings → Authorised domains.',
     };
     return messages[code] || 'Something went wrong. Please try again.';
 }
