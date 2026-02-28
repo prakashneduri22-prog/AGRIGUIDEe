@@ -51,18 +51,22 @@ async function handleSignIn() {
     if (btn) { btn.textContent = 'Signing in…'; btn.disabled = true; }
 
     try {
-        if (!auth) throw { code: 'auth/not-configured', message: 'Firebase not configured.' };
+        if (!auth) throw { code: 'auth/not-configured' };
+
+        // 1. Sign in with Firebase Auth
         const userCredential = await auth.signInWithEmailAndPassword(email, password);
         const user = userCredential.user;
 
-        // Update last login time in Firestore
+        // 2. Update last login in Firestore (non-blocking — won't stop navigation)
         if (db) {
-            await db.collection('users').doc(user.uid).set({
+            db.collection('users').doc(user.uid).set({
                 lastLogin: firebase.firestore.FieldValue.serverTimestamp()
-            }, { merge: true });
+            }, { merge: true }).catch(() => {});
         }
 
+        // 3. ✅ Always navigate to main page
         showPage('irrigation-page');
+
     } catch (err) {
         errEl.textContent = friendlyError(err.code);
         errEl.classList.remove('hidden');
@@ -83,6 +87,7 @@ async function handleGuestSignIn() {
 }
 
 // ---- Sign Up ----
+// ---- Sign Up ----
 async function handleSignUp() {
     const name     = document.getElementById('signup-name').value.trim();
     const email    = document.getElementById('signup-email').value.trim();
@@ -101,27 +106,29 @@ async function handleSignUp() {
     if (btn) { btn.textContent = 'Creating account…'; btn.disabled = true; }
 
     try {
-        if (!auth) throw { code: 'auth/not-configured', message: 'Firebase not configured.' };
+        if (!auth) throw { code: 'auth/not-configured' };
 
         // 1. Create user in Firebase Authentication
         const userCredential = await auth.createUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
 
-        // 2. Set display name on Auth profile
+        // 2. Set display name
         await user.updateProfile({ displayName: name });
 
-        // 3. Store email + password + name in Firestore → "users" collection
+        // 3. Save to Firestore (non-blocking — won't stop navigation if it fails)
         if (db) {
-            await db.collection('users').doc(user.uid).set({
+            db.collection('users').doc(user.uid).set({
                 uid:       user.uid,
                 name:      name,
                 email:     email,
-                password:  password,          // ← stored in Firestore as requested
+                password:  password,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
+            }).catch(() => {});
         }
 
+        // 4. ✅ Always navigate to main page
         showPage('irrigation-page');
+
     } catch (err) {
         alert('Sign up failed: ' + friendlyError(err.code));
     } finally {
