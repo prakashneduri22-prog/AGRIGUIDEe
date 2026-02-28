@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="ESE.css">
+    <style>
+        /* All pages hidden by default — JS calls showPage() to reveal the correct one */
+        .page.hidden { display: none !important; }
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        roboto: ["Roboto"],
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+
+<body class="bg-green-100 p-4">
+    <div>
+        <!-- SIGN IN PAGE -->
+        <div id="signin-page" class="page hidden min-h-screen flex items-center justify-center">
+            <div class="w-full max-w-md">
+                <!-- Logo / Branding -->
+                <div class="text-center mb-8">
+                    <div class="inline-flex items-center justify-center w-20 h-20 bg-green-600 rounded-full mb-4 shadow-lg">
+                        <span class="text-4xl">🌾</span>
+                    </div>
+                    <h1 class="text-4xl font-bold text-green-800 mb-1">AGRI GUIDE</h1>
+                    <p class="text-gray-600 text-base">Smart Agricultural Guidance Platform</p>
+                </div>
+
+                <!-- Card -->
+                <div class="bg-white rounded-3xl shadow-2xl p-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-1">Welcome Back 👋</h2>
+                    <p class="text-gray-500 text-sm mb-6">Sign in to access your crop recommendations</p>
+
+                    <div id="signin-error" class="hidden bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3 mb-4"></div>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Email Address</label>
+                        <input id="signin-email" type="email" placeholder="farmer@example.com" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition" />
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Password</label>
+                        <div class="relative">
+                            <input id="signin-password" type="password" placeholder="Enter your password" class="w-full border border-gray-200 rounded-xl px-4 py-3 pr-12 text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-transparent transition" />
+                            <button onclick="togglePassword()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xl">
+                                <span id="eye-icon">👁️</span>
+                            </button>
+                        </div>
+                        <div class="flex justify-end mt-1">
+                            <a href="#" class="text-xs text-green-600 hover:underline font-medium">Forgot password?</a>
+                        </div>
+                    </div>
+
+                    <button id="signin-btn" onclick="handleSignIn()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transform hover:scale-105 transition-all duration-300 shadow-md text-lg">
+                        Sign In →
+                    </button>
+
+                    <div class="flex items-center my-5">
+                        <div class="flex-1 border-t border-gray-200"></div>
+                        <span class="px-3 text-gray-400 text-sm">or</span>
+                        <div class="flex-1 border-t border-gray-200"></div>
+                    </div>
+
+                    <button onclick="handleGuestSignIn()" class="w-full border-2 border-green-500 text-green-700 font-bold py-3 rounded-xl transform hover:scale-105 transition-all duration-300 text-base hover:bg-green-50">
+                        Continue as Guest 🌱
+                    </button>
+
+                    <p class="text-center text-sm text-gray-500 mt-6">
+                        Don't have an account?
+                        <a href="#" onclick="showSignUp()" class="text-green-600 font-semibold hover:underline">Sign Up</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SIGN UP PAGE -->
+        <div id="signup-page" class="page hidden min-h-screen flex items-center justify-center">
+            <div class="w-full max-w-md">
+                <div class="text-center mb-8">
+                    <div class="inline-flex items-center justify-center w-20 h-20 bg-green-600 rounded-full mb-4 shadow-lg">
+                        <span class="text-4xl">🌾</span>
+                    </div>
+                    <h1 class="text-4xl font-bold text-green-800 mb-1">AGRI GUIDE</h1>
+                    <p class="text-gray-600 text-base">Create your free account</p>
+                </div>
+                <div class="bg-white rounded-3xl shadow-2xl p-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-1">Create Account 🌿</h2>
+                    <p class="text-gray-500 text-sm mb-6">Join thousands of farmers using Agri Guide</p>
+
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Full Name</label>
+                        <input id="signup-name" type="text" placeholder="Your full name" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-400 transition" />
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Email Address</label>
+                        <input id="signup-email" type="email" placeholder="farmer@example.com" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-400 transition" />
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Password</label>
+                        <input id="signup-password" type="password" placeholder="Create a password" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-400 transition" />
+                    </div>
+
+                    <button id="signup-btn" onclick="handleSignUp()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transform hover:scale-105 transition-all duration-300 shadow-md text-lg">
+                        Create Account →
+                    </button>
+
+                    <p class="text-center text-sm text-gray-500 mt-6">
+                        Already have an account?
+                        <a href="#" onclick="showSignIn()" class="text-green-600 font-semibold hover:underline">Sign In</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div id="irrigation-page" class="page hidden">
+            <header class="text-center mb-12 mt-20">
+                <h1 class="text-5xl font-bold mb-6">
+                    AGRI GUIDE
+                </h1>
+                <p class="text-xl text-gray-700 mb-2">
+                    Welcome to Smart Agricultural Guidance
+                </p>
+                <p class="text-lg text-gray-600">
+                    Select your irrigation type to get personalized crop recommendations
+                </p>
+            </header>
+            <div class="flex flex-col gap-8 justify-center">
+                <button onclick="showLargeScaleOptions()" class="irrigation-btn bg-[url('https://img.freepik.com/premium-photo/peaceful-rice-field-sunset-with-beautiful-sky_1370221-460.jpg')]  bg-cover text-white p-12 rounded-3xl transform hover:scale-105 duration-300">
+                    <div class="text-center">
+                        <h1 class="text-4xl font-bold mb-4">Large Scale Irrigation</h1>
+                        <p class="text-lg mb-6">
+                            For commercial farming with extensive irrigation systems
+                        </p>
+                        <div class="bg-white text-blue-600 font-bold pt-4 pb-4 rounded-xl">
+                            View Options →
+                        </div>
+                    </div>
+                </button>
+                <button onclick="showSmallScaleOptions()" class="irrigation-btn bg-[url('https://images.stockcake.com/public/d/6/9/d691ffe7-aee4-4eaf-8eee-9495d6296236_large/verdant-vegetable-garden-stockcake.jpg')] mb-10 bg-cover text-white p-12 rounded-3xl transform hover:scale-105 duration-300">
+                    <div class="text-center">
+                        <h2 class="text-4xl font-bold mb-4">Small Scale Irrigation</h2>
+                        <p class="text-lg mb-6">
+                            For farmers with limited water resources and small landholdings
+                        </p>
+                        <div class="bg-white text-green-600 font-bold pt-4 pb-4 rounded-xl">
+                            View Options →
+                        </div>
+                    </div>
+                </button>
+            </div>
+        </div>
+        <div id="large-scale-page" class="page hidden">
+            <header class="text-center mb-10 mt-10">
+                <button onclick="goBackToIrrigationPage()" class="mb-6 text-lg font-bold bg-white pl-4 pr-4 pt-2 pb-2 rounded-lg transform hover:scale-105 transition-all duration-300">
+                    ← Back to Irrigation Types
+                </button>
+                <h1 class="text-5xl font-bold mb-4">
+                    Large Scale Irrigation Types
+                </h1>
+            </header>
+            <div class="grid grid-cols-1 gap-6 mb-12">
+                <button onclick="showLargeScaleDetails('canal')" class="bg-[url('https://thumbs.dreamstime.com/b/irrigation-canal-channel-concrete-wall-send-water-reservoir-to-agricultural-area-system-supply-beautiful-393821015.jpg')] bg-cover text-white p-8 rounded-2xl transform hover:scale-105 duration-300">
+                    <div class="text-center">
+                        <h3 class="text-2xl font-bold mb-3">Canal Irrigation</h3>
+                        <div class="bg-white text-blue-600 font-bold pt-2 pb-2 pl-4 pr-4 rounded-lg">Learn More →</div>
+                    </div>
+                </button>
+                <button onclick="showLargeScaleDetails('tubewell')" class="bg-[url('https://static.vecteezy.com/system/resources/thumbnails/017/775/419/small/irrigation-water-flow-from-pipe-to-canal-for-agriculture-fields-free-photo.jpg')] bg-cover text-white p-8 rounded-2xl transform hover:scale-105 duration-300">
+                    <div class="text-center">
+                        <h3 class="text-2xl font-bold mb-3">Tube Well Irrigation</h3>
+                        <div class="bg-white text-cyan-600 font-bold pt-2 pb-2 pl-4 pr-4 rounded-lg">Learn More →</div>
+                    </div>
+                </button>
+                <button onclick="showLargeScaleDetails('dam')" class="bg-[url('https://images.pexels.com/photos/14594599/pexels-photo-14594599.jpeg?')] bg-cover text-white p-8 rounded-2xl transform hover:scale-105 duration-300">
+                    <div class="text-center">
+                        <h3 class="text-2xl font-bold mb-3">Dam/Reservoir Irrigation</h3>
+                        <div class="bg-white text-indigo-600 font-bold pt-2 pb-2 pl-4 pr-4 rounded-lg">Learn More →</div>
+                    </div>
+                </button>
+                <button onclick="showLargeScaleDetails('riverlift')" class="bg-[url('https://thumbs.dreamstime.com/b/agriculture-water-spray-25038551.jpg')] bg-cover text-white p-8 rounded-2xl transform hover:scale-105 duration-300">
+                    <div class="text-center">
+                        <h3 class="text-2xl font-bold mb-3">River Lift Irrigation</h3>
+                        <div class="bg-white text-emerald-600 font-bold pt-2 pb-2 pl-4 pr-4 rounded-lg">Learn More →</div>
+                    </div>
+                </button>
+            </div>
+        </div>
+        <div id="large-scale-detail-page" class="page hidden">
+            <header class="text-center mb-8">
+                <button onclick="backToLargeScaleOptions()" class="mb-6 text-lg font-bold bg-white pl-4 pr-4 pt-2 pb-2 rounded-lg transform hover:scale-105 transition-all duration-300">
+                    ← Back to Irrigation Types
+                </button>
+            </header>
+            <div id="large-scale-detail-content" class="bg-white rounded-3xl shadow-2xl p-8 md:p-12"></div>
+            <div class="text-center mt-8">
+                <button onclick="proceedToLargeScaleTool()" class="bg-blue-600 text-white font-bold pl-8 pr-8 pt-4 pb-4 rounded-xl transform hover:scale-105 duration-300">
+                    Continue to Crop Recommendations
+                </button>
+            </div>
+        </div>
+        <div id="small-scale-page" class="page hidden">
+            <header class="text-center mb-12 mt-10">
+                <button onclick="goBackToIrrigationPage()" class="mb-6 text-lg font-bold bg-white pl-4 pr-4 pt-2 pb-2 rounded-lg transform hover:scale-105 transition-all duration-300">
+                    ← Back to Irrigation Types
+                </button>
+                <h1 class="text-5xl md:text-6xl font-bold text-earthGreen mb-4">
+                    Small Scale Irrigation Types
+                </h1>
+            </header>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+                <button onclick="showSmallScaleDetails('home')" class="bg-[url('https://media.designcafe.com/wp-content/uploads/2021/06/30180453/grow-home-garden-vegetable-plants-in-balcony.jpg')] bg-cover text-white p-8 rounded-2xl transform hover:scale-105 duration-300">
+                    <div class="text-center">
+                        <h3 class="text-2xl font-bold mb-3">Home Gardening</h3>
+                        <div class="bg-white text-yellow-600 font-bold py-2 px-4 rounded-lg">Learn More →</div>
+                    </div>
+                </button>
+                <button onclick="showSmallScaleDetails('drip')" class="bg-[url('https://www.shutterstock.com/image-photo/baby-vegetables-planting-nursery-greenhouse-600nw-2566651655.jpg')] bg-cover text-white p-8 rounded-2xl transform hover:scale-105 duration-300">
+                    <div class="text-center">
+                        <h3 class="text-2xl font-bold mb-3">Drip Irrigation</h3>
+                        <div class="bg-white text-blue-600 font-bold py-2 px-4 rounded-lg">Learn More →</div>
+                    </div>
+                </button>
+                <button onclick="showSmallScaleDetails('limited')" class="bg-[url('https://as1.ftcdn.net/jpg/06/40/64/44/1000_F_640644495_jgJuIEwGYnn1Ji3Vjm2nRULi8SOPFcON.jpg')] bg-cover text-white p-8 rounded-2xl transform hover:scale-105 duration-300">
+                    <div class="text-center">
+                        <h3 class="text-2xl font-bold mb-3">Limited Water</h3>
+                        <div class="bg-white text-orange-600 font-bold py-2 px-4 rounded-lg">Learn More →</div>
+                    </div>
+                </button>
+                <button onclick="showSmallScaleDetails('sprinkler')" class="bg-[url('https://thumbs.dreamstime.com/b/agriculture-water-spray-25038551.jpg')] bg-cover text-white p-8 rounded-2xl transform hover:scale-105 duration-300">
+                    <div class="text-center">
+                        <h3 class="text-2xl font-bold mb-3">Sprinkler System</h3>
+                        <div class="bg-white text-cyan-600 font-bold py-2 px-4 rounded-lg">Learn More →</div>
+                    </div>
+                </button>
+                <button onclick="showSmallScaleDetails('wells')" class="bg-[url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS7bHU1jgtBUyv831PTa6w57vBn8QnG1-TV8w&')] bg-cover text-white p-8 rounded-2xl transform hover:scale-105 duration-300">
+                    <div class="text-center">
+                        <h3 class="text-2xl font-bold mb-3">Wells & Bore</h3>
+                        <div class="bg-white text-purple-600 font-bold py-2 px-4 rounded-lg">Learn More →</div>
+                    </div>
+                </button>
+                <button onclick="showSmallScaleDetails('rainwater')" class="bg-[url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0COQlwIDASep1Vdy-bCSJGacXPhOkqLN1iA&')] bg-cover text-white p-8 rounded-2xl transform hover:scale-105 duration-300">
+                    <div class="text-center">
+                        <h3 class="text-2xl font-bold mb-3">Rainwater Harvesting</h3>
+                        <div class="bg-white text-teal-600 font-bold py-2 px-4 rounded-lg">Learn More →</div>
+                    </div>
+                </button>
+            </div>
+        </div>
+        <div id="small-scale-detail-page" class="page hidden">
+            <header class="text-center mb-8">
+                <button onclick="backToSmallScaleOptions()" class="mb-6 text-lg font-bold bg-white pl-4 pr-4 pt-2 pb-2 rounded-lg transform hover:scale-105 transition-all duration-300">
+                    ← Back to Irrigation Types
+                </button>
+            </header>
+            <div id="small-scale-detail-content" class="bg-white rounded-3xl shadow-2xl p-8 md:p-12"></div>
+            <div class="text-center mt-8">
+                <button onclick="proceedToSmallScaleTool()" class="bg-green-600 text-white font-bold pl-8 pr-8 pt-4 pb-4 rounded-xl transform hover:scale-105 duration-300">
+                    Continue to Crop Recommendations
+                </button>
+            </div>
+        </div>
+        <div id="main-container-large" class="page hidden">
+            <header class="text-center mb-8">
+                <button onclick="goBackToIrrigationPage()" class="mb-6 text-lg font-bold bg-white pl-4 pr-4 pt-2 pb-2 rounded-lg transform hover:scale-105 transition-all duration-300">
+                    ← Back to Irrigation Types
+                </button>
+                <div class="bg-blue-100 text-blue-800 p-3 rounded-lg mb-4 font-bold">
+                    Large Scale Irrigation
+                </div>
+                <h1 class="text-5xl font-bold mb-2">
+                    Crop Recommendation Tool
+                </h1>
+            </header>
+            <div class="grid gap-6">
+                <div id="steps-container-large">
+                    <div id="step1-large" class="step">
+                        <div class="text-center mb-6">
+                            <h2 class="text-3xl font-bold mb-2">Step 1: Select Season</h2>
+                            <p class="text-lg text-gray-600">Choose the current cropping season.</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                            <button onclick="selectSeasonLarge('Kharif')" class="season-btn bg-green-500 text-white p-6 rounded-2xl text-2xl font-bold transform hover:scale-105 transition-all duration-300">
+                                Kharif
+                            </button>
+                            <button onclick="selectSeasonLarge('Rabi')" class="season-btn bg-blue-500 text-white p-6 rounded-2xl text-2xl font-bold transform hover:scale-105 transition-all duration-300">
+                                Rabi
+                            </button>
+                            <button onclick="selectSeasonLarge('Summer')" class="season-btn bg-yellow-500 text-white p-6 rounded-2xl text-2xl font-bold transform hover:scale-105 transition-all duration-300">
+                                Summer
+                            </button>
+                        </div>
+                    </div>
+                    <div id="step2-large" class="step hidden">
+                        <button onclick="goBackLarge()" class="mb-6 text-lg font-bold bg-white pl-4 pr-4 pt-2 pb-2 rounded-lg transform hover:scale-105 duration-300">
+                            ← Back to Season
+                        </button>
+                        <div class="text-center mb-6">
+                            <h2 class="text-3xl font-bold text-earthBrown mb-2">Step 2: Select Soil Type</h2>
+                            <p class="text-lg text-gray-600">Choose your soil type.</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="selectSoilLarge('Alluvial')" class="soil-btn text-white bg-[#C2A97E] p-4 font-bold text-lg rounded-xl transform hover:scale-105 duration-300">Alluvial</button>
+                            <button onclick="selectSoilLarge('Black')" class="soil-btn text-white bg-[#2C2416] p-4 font-bold text-lg rounded-xl transform hover:scale-105 duration-300">Black</button>
+                            <button onclick="selectSoilLarge('Red')" class="soil-btn text-white bg-[#8B3A2A] p-4 font-bold text-lg rounded-xl transform hover:scale-105 duration-300">Red</button>
+                            <button onclick="selectSoilLarge('Sandy')" class="soil-btn text-white bg-[#D4B483] p-4 font-bold text-lg rounded-xl transform hover:scale-105 duration-300">Sandy</button>
+                            <button onclick="selectSoilLarge('Loamy')" class="soil-btn text-white bg-[#6B4226] p-4 font-bold text-lg rounded-xl transform hover:scale-105 duration-300">Loamy</button>
+                        </div>
+                    </div>
+                    <div id="step3-large" class="step hidden">
+                        <button onclick="goBackLarge()" class="mb-6 text-lg font-bold bg-white pl-4 pr-4 pt-2 pb-2 rounded-lg transform hover:scale-105 duration-300">
+                            ← Change Selection
+                        </button>
+                        <div class="text-center mb-6">
+                            <h2 class="text-3xl font-bold mb-2">Your Recommendations</h2>
+                            <p id="selection-summary-large" class="text-lg text-gray-600"></p>
+                        </div>
+                        <div id="results-card-large" class="bg-white rounded-3xl p-6"></div>
+                    </div>
+                </div>
+                <aside class="bg-white rounded-3xl p-6">
+                    <h3 class="text-2xl font-bold mb-4 gap-2">
+                        Quick Preview
+                    </h3>
+                    <div class="text-base text-gray-800">
+                        <p class="mb-2">Click on a crop name to view details.</p>
+                        <p class="text-sm text-gray-500">Details will appear here when you select a crop.</p>
+                    </div>
+                </aside>
+            </div>
+        </div>
+        <div id="main-container-small" class="page hidden">
+            <header class="text-center mb-8">
+                <button onclick="goBackToIrrigationPage()" class="mb-6 text-lg font-bold bg-white pl-4 pr-4 pt-2 pb-2 rounded-lg transform hover:scale-105 duration-300">
+                    Back to Irrigation Types
+                </button>
+                <div class="bg-green-200 text-green-800 p-3 rounded-lg mb-4 font-bold">
+                    Small Scale Irrigation
+                </div>
+                <h1 class="text-5xl font-bold mb-2">
+                    Crop Recommendation Tool
+                </h1>
+            </header>
+            <div class="grid gap-6">
+                <div id="steps-container-small">
+                    <div id="step1-small" class="step">
+                        <div class="text-center mb-6">
+                            <h2 class="text-3xl font-bold mb-2">Step 1: Select Season</h2>
+                            <p class="text-lg text-gray-600">Choose the current cropping season.</p>
+                        </div>
+                        <div class="grid gap-4">
+                            <button onclick="selectSeasonSmall('Kharif')" class="season-btn bg-green-500 text-white p-6 rounded-2xl text-2xl font-bold transform hover:scale-105 transition-all duration-300">
+                                Kharif
+                            </button>
+                            <button onclick="selectSeasonSmall('Rabi')" class="season-btn bg-blue-500 text-white p-6 rounded-2xl text-2xl font-bold transform hover:scale-105 transition-all duration-300">
+                                Rabi
+                            </button>
+                            <button onclick="selectSeasonSmall('Summer')" class="season-btn bg-yellow-500 text-white p-6 rounded-2xl text-2xl font-bold transform hover:scale-105 transition-all duration-300">
+                                Summer
+                            </button>
+                        </div>
+                    </div>
+                    <div id="step2-small" class="step hidden">
+                        <button onclick="goBackSmall()" class="mb-6 text-lg font-bold bg-white pl-4 pr-4 pt-2 pb-2 rounded-lg transform hover:scale-105 duration-300">
+                            Back to Season
+                        </button>
+                        <div class="text-center mb-6">
+                            <h2 class="text-3xl font-bold mb-2">Step 2: Select Soil Type</h2>
+                            <p class="text-lg text-gray-600">Choose your soil type.</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="selectSoilSmall('Alluvial')" class="soil-btn text-white bg-[#C2A97E] p-4 font-bold text-lg rounded-xl transform hover:scale-105 duration-300">Alluvial</button>
+                            <button onclick="selectSoilSmall('Black')" class="soil-btn text-white bg-[#2C2416] p-4 font-bold text-lg rounded-xl transform hover:scale-105 duration-300">Black</button>
+                            <button onclick="selectSoilSmall('Red')" class="soil-btn text-white bg-[#8B3A2A] p-4 font-bold text-lg rounded-xl transform hover:scale-105 duration-300">Red</button>
+                            <button onclick="selectSoilSmall('Sandy')" class="soil-btn text-white bg-[#D4B483] p-4 font-bold text-lg rounded-xl transform hover:scale-105 duration-300">Sandy</button>
+                            <button onclick="selectSoilSmall('Loamy')" class="soil-btn text-white bg-[#6B4226] p-4 font-bold text-lg rounded-xl transform hover:scale-105 duration-300">Loamy</button>
+                        </div>
+                    </div>
+                    <div id="step3-small" class="step hidden">
+                        <button onclick="goBackSmall()" class="mb-6 text-lg font-bold bg-white pl-4 pr-4 pt-2 pb-2 rounded-lg transform hover:scale-105 duration-300">
+                            Change Selection
+                        </button>
+                        <div class="text-center mb-6">
+                            <h2 class="text-3xl font-bold mb-2">Your Recommendations</h2>
+                            <p id="selection-summary-small" class="text-lg text-gray-600"></p>
+                        </div>
+                        <div id="results-card-small" class="bg-white rounded-3xl p-6"></div>
+                    </div>
+                </div>
+                <aside class="bg-white rounded-3xl p-6 mb-8">
+                    <h3 class="text-2xl font-bold mb-4 gap-2">
+                        Quick Preview
+                    </h3>
+                    <div class="text-base md:text-lg text-gray-800">
+                        <p class="mb-2">Click on a crop name to view details.</p>
+                        <p class="text-sm text-gray-500">Details will appear here when you select a crop.</p>
+                    </div>
+                </aside>
+            </div>
+        </div>
+        <div id="detail-page" class="detail-page page hidden">
+            <button onclick="goBackToMainFromDetail()" class="mb-6 text-lg font-bold bg-white pl-4 pr-4 pt-2 pb-2 rounded-lg transform hover:scale-105 transition-all duration-300">
+                Back to Recommendations
+            </button>
+            <div id="crop-detail-full"></div>
+        </div>
+    </div>
+    <!-- ✅ Firebase SDKs (compat version — works without a server / build tool) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+    <script>
+        // ============================================================
+        // ⚠️  IMPORTANT: Replace ALL values below with your real
+        // Firebase config before deploying to GitHub Pages.
+        // Firebase Console → Project Settings → Your Apps → Web App
+        // ============================================================
+        const firebaseConfig = {
+            apiKey:            "YOUR_API_KEY",
+            authDomain:        "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId:         "YOUR_PROJECT_ID",
+            storageBucket:     "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId:             "YOUR_APP_ID"
+        };
+
+        // Safe init — page won't crash if config is missing
+        let auth = null;
+        let db   = null;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            auth = firebase.auth();
+            db   = firebase.firestore();
+        } catch (e) {
+            console.warn("Firebase not configured yet. Replace firebaseConfig values in index.html");
+        }
+    </script>
+
+    <!-- Main app logic -->
+    <script src="ESE.js"></script>
+</body>
+
+</html>
