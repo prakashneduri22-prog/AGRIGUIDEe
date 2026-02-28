@@ -73,6 +73,17 @@
                         Continue as Guest 🌱
                     </button>
 
+                    <!-- Google Sign In -->
+                    <div class="flex items-center my-4">
+                        <div class="flex-1 border-t border-gray-200"></div>
+                        <span class="px-3 text-gray-400 text-sm">or</span>
+                        <div class="flex-1 border-t border-gray-200"></div>
+                    </div>
+                    <button id="google-signin-btn" onclick="handleGoogleSignIn()" class="w-full flex items-center justify-center gap-3 border-2 border-gray-200 bg-white hover:bg-gray-50 text-gray-700 font-bold py-3 rounded-xl transform hover:scale-105 transition-all duration-300 shadow-sm">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5" />
+                        Sign in with Google
+                    </button>
+
                     <p class="text-center text-sm text-gray-500 mt-6">
                         Don't have an account?
                         <a href="#" onclick="showSignUp()" class="text-green-600 font-semibold hover:underline">Sign Up</a>
@@ -110,6 +121,17 @@
 
                     <button id="signup-btn" onclick="handleSignUp()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transform hover:scale-105 transition-all duration-300 shadow-md text-lg">
                         Create Account →
+                    </button>
+
+                    <!-- Google Sign Up -->
+                    <div class="flex items-center my-4">
+                        <div class="flex-1 border-t border-gray-200"></div>
+                        <span class="px-3 text-gray-400 text-sm">or</span>
+                        <div class="flex-1 border-t border-gray-200"></div>
+                    </div>
+                    <button id="google-signup-btn" onclick="handleGoogleSignIn()" class="w-full flex items-center justify-center gap-3 border-2 border-gray-200 bg-white hover:bg-gray-50 text-gray-700 font-bold py-3 rounded-xl transform hover:scale-105 transition-all duration-300 shadow-sm">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5" />
+                        Sign up with Google
                     </button>
 
                     <p class="text-center text-sm text-gray-500 mt-6">
