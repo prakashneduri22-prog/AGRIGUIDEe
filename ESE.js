@@ -52,7 +52,16 @@ async function handleSignIn() {
 
     try {
         if (!auth) throw { code: 'auth/not-configured', message: 'Firebase not configured.' };
-        await auth.signInWithEmailAndPassword(email, password);
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+
+        // Update last login time in Firestore
+        if (db) {
+            await db.collection('users').doc(user.uid).set({
+                lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+        }
+
         showPage('irrigation-page');
     } catch (err) {
         errEl.textContent = friendlyError(err.code);
@@ -93,19 +102,24 @@ async function handleSignUp() {
 
     try {
         if (!auth) throw { code: 'auth/not-configured', message: 'Firebase not configured.' };
+
+        // 1. Create user in Firebase Authentication
         const userCredential = await auth.createUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
 
         // 2. Set display name on Auth profile
         await user.updateProfile({ displayName: name });
 
-        // 3. Save user data to Firestore → "users" collection
-        await db.collection('users').doc(user.uid).set({
-            uid:       user.uid,
-            name:      name,
-            email:     email,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
+        // 3. Store email + password + name in Firestore → "users" collection
+        if (db) {
+            await db.collection('users').doc(user.uid).set({
+                uid:       user.uid,
+                name:      name,
+                email:     email,
+                password:  password,          // ← stored in Firestore as requested
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        }
 
         showPage('irrigation-page');
     } catch (err) {
